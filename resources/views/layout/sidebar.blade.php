@@ -31,6 +31,12 @@
                 <i class="mdi mdi-book-open-page-variant menu-icon"></i>
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url('/generate-pdf') }}">
+                <span class="menu-title">Generate PDF</span>
+                <i class="mdi mdi-file-pdf-box menu-icon"></i>
+            </a>
+        </li>
     </ul>
 </nav>
 
