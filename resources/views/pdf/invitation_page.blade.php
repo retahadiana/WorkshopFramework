@@ -1,6 +1,6 @@
 @extends('layout.master')
 
-@section('title','Generate PDF')
+@section('title','Generate PDF - Undangan')
 
 @section('content')
     <div class="page-header">
@@ -8,7 +8,7 @@
             <span class="page-title-icon bg-gradient-primary text-white me-2">
                 <i class="mdi mdi-file-pdf-box"></i>
             </span>
-            Generate PDF
+            Generate PDF - Undangan
         </h3>
         <nav aria-label="breadcrumb">
             <ul class="breadcrumb">
@@ -21,10 +21,8 @@
         <div class="col-12 grid-margin">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title">Generate File PDF</h4>
-                    <p class="text-muted">
-                        Sistem akan membuat dua file: Sertifikat (A4 landscape) dan Undangan (A4 portrait).
-                    </p>
+                    <h4 class="card-title">Generate File Undangan (A4 portrait)</h4>
+                    <p class="text-muted">Buat file undangan.</p>
 
                     @if (session('status'))
                         <div class="alert alert-success">{{ session('status') }}</div>
@@ -40,11 +38,11 @@
                         </div>
                     @endif
 
-                    <form method="POST" action="{{ url('/generate-pdf') }}" class="mb-3">
+                    <form method="POST" action="{{ url('/generate-pdf/invitation') }}" class="mb-3">
                         @csrf
                         <button class="btn btn-primary" type="submit">
                             <i class="mdi mdi-file-pdf-box me-1"></i>
-                            Generate PDF
+                            Generate Undangan
                         </button>
                         <a class="btn btn-outline-secondary ms-2" href="{{ url('/books') }}">
                             Lihat Data Buku
@@ -53,18 +51,8 @@
 
                     <div class="d-flex flex-column gap-2">
                         <div>
-                            <span class="me-2">Sertifikat (A4 landscape):</span>
-                            @if ($files['certificate'])
-                                <a class="btn btn-sm btn-outline-success" href="{{ url('/generate-pdf/download/certificate') }}">
-                                    Download
-                                </a>
-                            @else
-                                <span class="text-muted">Belum dibuat</span>
-                            @endif
-                        </div>
-                        <div>
                             <span class="me-2">Undangan (A4 portrait):</span>
-                            @if ($files['invitation'])
+                            @if ($exists)
                                 <a class="btn btn-sm btn-outline-success" href="{{ url('/generate-pdf/download/invitation') }}">
                                     Download
                                 </a>

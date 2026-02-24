@@ -50,11 +50,24 @@ Route::get('/books/{book}/edit', [BookController::class, 'edit'])->middleware(['
 Route::put('/books/{book}', [BookController::class, 'update'])->middleware(['auth','session.user']);
 Route::delete('/books/{book}', [BookController::class, 'destroy'])->middleware(['auth','session.user']);
 
-// PDF generator
-Route::get('/generate-pdf', [GeneratePdfController::class, 'index'])
-    ->middleware(['auth','session.user'])
-    ->name('pdf.generate');
-Route::post('/generate-pdf', [GeneratePdfController::class, 'generate'])->middleware(['auth','session.user']);
+// PDF generator (legacy single-page endpoints)
+// Route::get('/generate-pdf', [GeneratePdfController::class, 'index'])
+//     ->middleware(['auth','session.user'])
+//     ->name('pdf.generate');
+// Route::post('/generate-pdf', [GeneratePdfController::class, 'generate'])->middleware(['auth','session.user']);
 Route::get('/generate-pdf/download/{type}', [GeneratePdfController::class, 'download'])
     ->whereIn('type', ['certificate', 'invitation'])
+    ->middleware(['auth','session.user']);
+
+// Separate pages for certificate and invitation
+Route::get('/generate-pdf/certificate', [GeneratePdfController::class, 'certificate'])
+    ->middleware(['auth','session.user'])
+    ->name('pdf.certificate');
+Route::post('/generate-pdf/certificate', [GeneratePdfController::class, 'generateCertificate'])
+    ->middleware(['auth','session.user']);
+
+Route::get('/generate-pdf/invitation', [GeneratePdfController::class, 'invitation'])
+    ->middleware(['auth','session.user'])
+    ->name('pdf.invitation');
+Route::post('/generate-pdf/invitation', [GeneratePdfController::class, 'generateInvitation'])
     ->middleware(['auth','session.user']);

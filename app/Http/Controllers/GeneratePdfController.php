@@ -10,20 +10,36 @@ class GeneratePdfController extends Controller
 {
     public function index()
     {
-        $files = [
-            'certificate' => $this->pdfPath('certificate'),
-            'invitation' => $this->pdfPath('invitation'),
-        ];
+        // Legacy single-page view removed. Redirect to certificate page.
+        return redirect()->route('pdf.certificate');
+    }
 
-        return view('pdf.generate', [
-            'files' => [
-                'certificate' => Storage::disk('local')->exists($files['certificate']),
-                'invitation' => Storage::disk('local')->exists($files['invitation']),
-            ],
+    public function certificate()
+    {
+        $path = $this->pdfPath('certificate');
+
+        return view('pdf.certificate_page', [
+            'exists' => Storage::disk('local')->exists($path),
+        ]);
+    }
+
+    public function invitation()
+    {
+        $path = $this->pdfPath('invitation');
+
+        return view('pdf.invitation_page', [
+            'exists' => Storage::disk('local')->exists($path),
         ]);
     }
 
     public function generate(Request $request)
+    {
+        // Legacy combined generation removed. Use per-document generation routes instead.
+        return redirect()->route('pdf.certificate')
+            ->with('status', 'Gunakan halaman terpisah untuk membuat file PDF.');
+    }
+
+    public function generateCertificate(Request $request)
     {
         $certificate = Pdf::loadView('pdf.certificate', [
             'name' => $request->user()->name ?? 'Peserta',
@@ -33,6 +49,14 @@ class GeneratePdfController extends Controller
             'number' => '3353/B/2025',
         ])->setPaper('a4', 'landscape');
 
+        Storage::disk('local')->put($this->pdfPath('certificate'), $certificate->output());
+
+        return redirect()->route('pdf.certificate')
+            ->with('status', 'File Sertifikat berhasil dibuat.');
+    }
+
+    public function generateInvitation(Request $request)
+    {
         $invitation = Pdf::loadView('pdf.invitation', [
             'number' => '021/HIMA-D4TI/FV-UA/II/2026',
             'date' => 'Senin, 24 Februari 2026',
@@ -44,11 +68,10 @@ class GeneratePdfController extends Controller
             'recipient' => 'Reta Hadiana Unggula',
         ])->setPaper('a4', 'portrait');
 
-        Storage::disk('local')->put($this->pdfPath('certificate'), $certificate->output());
         Storage::disk('local')->put($this->pdfPath('invitation'), $invitation->output());
 
-        return redirect()->route('pdf.generate')
-            ->with('status', 'File PDF berhasil dibuat.');
+        return redirect()->route('pdf.invitation')
+            ->with('status', 'File Undangan berhasil dibuat.');
     }
 
     public function download(string $type)
