@@ -32,6 +32,12 @@
             </a>
         </li>
         <li class="nav-item">
+            <a class="nav-link" href="{{ url('/barang') }}">
+                <span class="menu-title">Barang</span>
+                <i class="mdi mdi-package-variant-closed menu-icon"></i>
+            </a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse" href="#pdfMenu" aria-expanded="false" aria-controls="pdfMenu">
                 <span class="menu-title">Generate PDF</span>
                 <i class="menu-arrow"></i>

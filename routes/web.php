@@ -12,6 +12,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\GeneratePdfController;
+use App\Http\Controllers\BarangController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -71,3 +72,11 @@ Route::get('/generate-pdf/invitation', [GeneratePdfController::class, 'invitatio
     ->name('pdf.invitation');
 Route::post('/generate-pdf/invitation', [GeneratePdfController::class, 'generateInvitation'])
     ->middleware(['auth','session.user']);
+
+Route::get('/barang', [BarangController::class, 'index'])->middleware(['auth','session.user']);
+Route::get('/barang/create', [BarangController::class, 'create'])->middleware(['auth','session.user']);
+Route::post('/barang', [BarangController::class, 'store'])->middleware(['auth','session.user']);
+Route::get('/barang/{id_barang}/edit', [BarangController::class, 'edit'])->middleware(['auth','session.user']);
+Route::put('/barang/{id_barang}', [BarangController::class, 'update'])->middleware(['auth','session.user']);
+Route::delete('/barang/{id_barang}', [BarangController::class, 'destroy'])->middleware(['auth','session.user']);
+Route::post('/cetak-label', [BarangController::class, 'cetak'])->middleware(['auth','session.user']);
