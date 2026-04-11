@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Carbon;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\Writer\PngWriter;
 
 class KasirController extends Controller
 {
@@ -209,6 +213,7 @@ class KasirController extends Controller
                 'penjualan_id' => $penjualanId,
                 'no_invoice' => $noInvoice,
                 'print_url' => route('kasir.struk', ['id' => $penjualanId]),
+                'success_url' => route('kasir.success', ['id' => $penjualanId]),
             ]);
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -253,6 +258,14 @@ class KasirController extends Controller
 
         abort_if(!$penjualan, 404);
 
+        $qrCode = QrCode::create(sprintf('IDPENJUALAN:%s', $penjualan->id_penjualan))
+            ->setEncoding(new Encoding('UTF-8'))
+            ->setErrorCorrectionLevel(ErrorCorrectionLevel::High)
+            ->setSize(220)
+            ->setMargin(10);
+        $writer = new PngWriter();
+        $qrCodeDataUri = $writer->write($qrCode)->getDataUri();
+
         $detailQuery = DB::table('penjualan_detail as pd')
             ->leftJoin('barang as b', 'pd.id_barang', '=', 'b.id_barang')
             ->where("pd.{$detailFkColumn}", $id)
@@ -271,7 +284,67 @@ class KasirController extends Controller
 
         $details = $detailQuery->get();
 
-        return view('kasir.struk', compact('penjualan', 'details'));
+        return view('kasir.struk', compact('penjualan', 'details', 'qrCodeDataUri'));
+    }
+
+    public function success($id)
+    {
+        $schema = $this->resolveSalesSchema();
+        $pkColumn = $schema['penjualan_pk'];
+        $dateColumn = $schema['penjualan_date_col'];
+        $invoiceColumn = $schema['penjualan_invoice_col'];
+        $detailFkColumn = $schema['detail_fk_col'];
+
+        $penjualanQuery = DB::table('penjualan')
+            ->where($pkColumn, $id)
+            ->select([
+                "{$pkColumn} as id_penjualan",
+                'total',
+            ]);
+
+        if ($invoiceColumn) {
+            $penjualanQuery->addSelect("{$invoiceColumn} as no_invoice");
+        } else {
+            $penjualanQuery->addSelect(DB::raw("NULL as no_invoice"));
+        }
+
+        if ($dateColumn) {
+            $penjualanQuery->addSelect("{$dateColumn} as tanggal");
+        } else {
+            $penjualanQuery->addSelect(DB::raw('NULL as tanggal'));
+        }
+
+        $penjualan = $penjualanQuery->first();
+
+        abort_if(!$penjualan, 404);
+
+        $qrCode = QrCode::create(sprintf('IDPENJUALAN:%s', $penjualan->id_penjualan))
+            ->setEncoding(new Encoding('UTF-8'))
+            ->setErrorCorrectionLevel(ErrorCorrectionLevel::High)
+            ->setSize(300)
+            ->setMargin(10);
+        $writer = new PngWriter();
+        $qrCodeDataUri = $writer->write($qrCode)->getDataUri();
+
+        $detailQuery = DB::table('penjualan_detail as pd')
+            ->leftJoin('barang as b', 'pd.id_barang', '=', 'b.id_barang')
+            ->where("pd.{$detailFkColumn}", $id)
+            ->select([
+                'pd.id_barang',
+                DB::raw('COALESCE(b.nama, pd.id_barang) as nama_barang'),
+                'pd.jumlah',
+                'pd.subtotal',
+            ]);
+
+        if ($schema['detail_has_harga']) {
+            $detailQuery->addSelect('pd.harga');
+        } else {
+            $detailQuery->addSelect(DB::raw('CASE WHEN pd.jumlah > 0 THEN FLOOR(pd.subtotal / pd.jumlah) ELSE 0 END as harga'));
+        }
+
+        $details = $detailQuery->get();
+
+        return view('kasir.success', compact('penjualan', 'details', 'qrCodeDataUri'));
     }
 
     private function resolveSalesSchema(): array

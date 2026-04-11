@@ -1,0 +1,169 @@
+{
+  "provinces": [
+    "DKI Jakarta",
+    "Jawa Barat",
+    "Jawa Tengah",
+    "Jawa Timur"
+  ],
+  "cities": {
+    "DKI Jakarta": [
+      "Jakarta Pusat",
+      "Jakarta Utara",
+      "Jakarta Selatan",
+      "Jakarta Barat",
+      "Jakarta Timur"
+    ],
+    "Jawa Barat": [
+      "Bandung",
+      "Bogor",
+      "Bekasi",
+      "Cirebon"
+    ],
+    "Jawa Tengah": [
+      "Semarang",
+      "Surakarta",
+      "Magelang"
+    ],
+    "Jawa Timur": [
+      "Surabaya",
+      "Malang",
+      "Sidoarjo"
+    ]
+  },
+  "districts": {
+    "Jakarta Pusat": [
+      "Gambir",
+      "Menteng",
+      "Senen"
+    ],
+    "Jakarta Selatan": [
+      "Setiabudi",
+      "Cilandak",
+      "Kebayoran Baru"
+    ],
+    "Bandung": [
+      "Coblong",
+      "Sukajadi",
+      "Lengkong"
+    ],
+    "Bogor": [
+      "Bogor Selatan",
+      "Bogor Utara"
+    ],
+    "Surabaya": [
+      "Genteng",
+      "Wonokromo"
+    ],
+    "Malang": [
+      "Klojen",
+      "Lowokwaru"
+    ],
+    "Semarang": [
+      "Gajahmungkur",
+      "Candisari"
+    ],
+    "Surakarta": [
+      "Laweyan",
+      "Serengan"
+    ],
+    "Magelang": [
+      "Mungkid",
+      "Muntilan"
+    ],
+    "Cirebon": [
+      "Kesambi",
+      "Kejaksan"
+    ],
+    "Bekasi": [
+      "Bekasi Selatan",
+      "Bekasi Timur"
+    ],
+    "Sidoarjo": [
+      "Taman",
+      "Sukodono"
+    ]
+  },
+  "postcodes": {
+    "Gambir": [
+      "10110"
+    ],
+    "Menteng": [
+      "10310"
+    ],
+    "Senen": [
+      "10410"
+    ],
+    "Setiabudi": [
+      "12910"
+    ],
+    "Cilandak": [
+      "12430"
+    ],
+    "Kebayoran Baru": [
+      "12120"
+    ],
+    "Coblong": [
+      "40134"
+    ],
+    "Sukajadi": [
+      "40161"
+    ],
+    "Lengkong": [
+      "40262"
+    ],
+    "Bogor Selatan": [
+      "16133"
+    ],
+    "Bogor Utara": [
+      "16111"
+    ],
+    "Genteng": [
+      "60275"
+    ],
+    "Wonokromo": [
+      "60244"
+    ],
+    "Klojen": [
+      "65111"
+    ],
+    "Lowokwaru": [
+      "65145"
+    ],
+    "Gajahmungkur": [
+      "50233"
+    ],
+    "Candisari": [
+      "50241"
+    ],
+    "Laweyan": [
+      "57134"
+    ],
+    "Serengan": [
+      "57132"
+    ],
+    "Mungkid": [
+      "56511"
+    ],
+    "Muntilan": [
+      "56512"
+    ],
+    "Kesambi": [
+      "45113"
+    ],
+    "Kejaksan": [
+      "45121"
+    ],
+    "Bekasi Selatan": [
+      "17141"
+    ],
+    "Bekasi Timur": [
+      "17114"
+    ],
+    "Taman": [
+      "61257"
+    ],
+    "Sukodono": [
+      "61254"
+    ]
+  }
+}

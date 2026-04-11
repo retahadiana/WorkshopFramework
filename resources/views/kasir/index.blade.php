@@ -356,11 +356,11 @@
                             title: 'Transaksi Berhasil Disimpan',
                             text: invoiceText,
                             showCancelButton: true,
-                            confirmButtonText: 'Cetak Struk',
+                            confirmButtonText: 'Lihat Bukti Transaksi',
                             cancelButtonText: 'Tutup'
                         }).then((result) => {
-                            if (result.isConfirmed && response.print_url) {
-                                window.open(response.print_url, '_blank');
+                            if (result.isConfirmed && response.success_url) {
+                                window.open(response.success_url, '_blank');
                             }
                         });
                     },

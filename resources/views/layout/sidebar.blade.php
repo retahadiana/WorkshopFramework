@@ -38,6 +38,26 @@
             </a>
         </li>
         <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('customer.*') ? 'active' : '' }}" data-bs-toggle="collapse" href="#customerMenu" aria-expanded="{{ request()->routeIs('customer.*') ? 'true' : 'false' }}" aria-controls="customerMenu">
+                <span class="menu-title">Customer</span>
+                <i class="menu-arrow"></i>
+                <i class="mdi mdi-account-plus menu-icon"></i>
+            </a>
+            <div class="collapse {{ request()->routeIs('customer.*') ? 'show' : '' }}" id="customerMenu">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('customer.index') ? 'active' : '' }}" href="{{ route('customer.index') }}">Data Customer</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('customer.create.blob') ? 'active' : '' }}" href="{{ route('customer.create.blob') }}">Tambah Customer 1</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('customer.create.path') ? 'active' : '' }}" href="{{ route('customer.create.path') }}">Tambah Customer 2</a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+        <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('tugas.js') ? 'active' : '' }}" href="{{ route('tugas.js') }}">
                 <span class="menu-title">Tugas JS</span>
                 <i class="mdi mdi-code-tags menu-icon"></i>

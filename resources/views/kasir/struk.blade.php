@@ -62,6 +62,11 @@
         <div>Tanggal: {{ $penjualan->tanggal ? \Carbon\Carbon::parse($penjualan->tanggal)->format('d-m-Y H:i:s') : '-' }}</div>
     </div>
 
+    <div style="text-align:center; margin-bottom:10px;">
+        <img src="{{ $qrCodeDataUri }}" alt="QR Code ID Pesanan" style="width:160px; height:auto; display:inline-block;" />
+        <div style="font-size:10px; margin-top:4px;">QR Code ID Pesanan: {{ $penjualan->id_penjualan }}</div>
+    </div>
+
     <table>
         <thead>
             <tr>

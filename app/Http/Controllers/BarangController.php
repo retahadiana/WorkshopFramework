@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Barang;
 use Illuminate\Http\Request;
+use Picqer\Barcode\BarcodeGeneratorPNG;
 
 class BarangController extends Controller
 {
@@ -96,7 +97,7 @@ public function cetak(Request $request)
         $marginKiri = 12;
         $marginAtas = 15;
         $lebarLabel = 38;
-        $tinggiLabel = 14;
+        $tinggiLabel = 20;
         $tampilkanGrid = $request->boolean('tampilkan_grid');
 
         if ($tampilkanGrid) {
@@ -123,18 +124,26 @@ public function cetak(Request $request)
             $x = $marginKiri + ($col * $lebarLabel);
             $y = $marginAtas + ($row * $tinggiLabel);
 
+            // Cetak Barcode 1D di atas id_barang
+            $generator = new BarcodeGeneratorPNG();
+            $barcodeData = $generator->getBarcode((string) $item->id_barang, $generator::TYPE_CODE_128, 2, 30);
+            $barcodeFile = tempnam(sys_get_temp_dir(), 'barcode_') . '.png';
+            file_put_contents($barcodeFile, $barcodeData);
+            $pdf->Image($barcodeFile, $x, $y, $lebarLabel, 8);
+            @unlink($barcodeFile);
+
             // Cetak ID Barang
-            $pdf->SetXY($x, $y);
+            $pdf->SetXY($x, $y + 8.5);
             $pdf->SetFont('Arial', '', 8);
             $pdf->Cell($lebarLabel, 4, (string) $item->id_barang, 0, 0, 'L');
 
             // Cetak Nama Barang
-            $pdf->SetXY($x, $y + 4);
+            $pdf->SetXY($x, $y + 12.5);
             $pdf->SetFont('Arial', 'B', 9);
             $pdf->Cell($lebarLabel, 4, substr($item->nama, 0, 18), 0, 0, 'L');
 
             // Cetak Harga Barang
-            $pdf->SetXY($x, $y + 8);
+            $pdf->SetXY($x, $y + 16.5);
             $pdf->SetFont('Arial', '', 8);
             $pdf->Cell($lebarLabel, 4, 'Rp ' . number_format($item->harga, 0, ',', '.'), 0, 0, 'L');
             $pdf->SetFont('Arial', 'B', 9);
