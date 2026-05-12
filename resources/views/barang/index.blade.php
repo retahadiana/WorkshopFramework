@@ -31,6 +31,9 @@
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h4 class="card-title mb-0">Daftar Barang</h4>
                         <div class="d-flex gap-2">
+                            <a href="{{ url('/scan-barcode') }}" class="btn btn-gradient-success btn-sm">
+                                <i class="mdi mdi-barcode-scan me-1"></i> Scan Barcode
+                            </a>
                             <a href="{{ url('/barang/create') }}" class="btn btn-gradient-primary btn-sm">
                                 <i class="mdi mdi-plus me-1"></i> Tambah Barang
                             </a>

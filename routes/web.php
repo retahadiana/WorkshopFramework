@@ -83,6 +83,8 @@ Route::get('/barang/{id_barang}/edit', [BarangController::class, 'edit'])->middl
 Route::put('/barang/{id_barang}', [BarangController::class, 'update'])->middleware(['auth','session.user']);
 Route::delete('/barang/{id_barang}', [BarangController::class, 'destroy'])->middleware(['auth','session.user']);
 Route::post('/cetak-label', [BarangController::class, 'cetak'])->middleware(['auth','session.user']);
+Route::get('/scan-barcode', [BarangController::class, 'scan'])->middleware(['auth','session.user']);
+Route::get('/api/barang/{id_barang}', [BarangController::class, 'show'])->middleware(['auth','session.user']);
 Route::get('/customer', [CustomerController::class, 'index'])->middleware(['auth','session.user'])->name('customer.index');
 Route::get('/customer/tambah-1', [CustomerController::class, 'createBlob'])->middleware(['auth','session.user'])->name('customer.create.blob');
 Route::post('/customer/tambah-1', [CustomerController::class, 'storeBlob'])->middleware(['auth','session.user'])->name('customer.store.blob');

@@ -90,18 +90,28 @@ public function cetak(Request $request)
             return back()->with('error', 'Data barang tidak ditemukan.')->withInput();
         }
 
+        $jumlahKolom = 5;
+        $jumlahBaris = 8;
+        $marginSampingTarget = 3.5;
+
+        $lebarLabel = 38;
+        $tinggiLabel = 18;
+        $jarakHorizontal = ((210 - (2 * $marginSampingTarget)) - ($jumlahKolom * $lebarLabel)) / ($jumlahKolom - 1);
+        $jarakVertikal = 1.2;
+
         $pdf = new \FPDF('P', 'mm', 'A4');
         $pdf->AddPage();
         $pdf->SetFont('Arial', 'B', 9);
 
-        $marginKiri = 12;
-        $marginAtas = 15;
-        $lebarLabel = 38;
-        $tinggiLabel = 20;
+        $marginKiri = $marginSampingTarget;
+        $marginAtas = 2.8;
+        $paddingX = 1.2;
+        $paddingTop = 1.4;
+        $lebarAreaCetak = $lebarLabel - ($paddingX * 2);
         $tampilkanGrid = $request->boolean('tampilkan_grid');
 
         if ($tampilkanGrid) {
-            $this->gambarGridPanduan($pdf, $marginKiri, $marginAtas, $lebarLabel, $tinggiLabel);
+            $this->gambarGridPanduan($pdf, $marginKiri, $marginAtas, $lebarLabel, $tinggiLabel, $jarakHorizontal, $jarakVertikal, $jumlahKolom, $jumlahBaris);
         }
 
         // Langsung set nilai awal col dan row (dikurangi 1 karena index array mulai dari 0)
@@ -110,49 +120,51 @@ public function cetak(Request $request)
 
         foreach ($barang as $item) {
             // Jika baris sudah lebih dari batas (kertas habis), pindah halaman baru
-            if ($row >= 8) {
+            if ($row >= $jumlahBaris) {
                 $pdf->AddPage();
                 $row = 0; // Reset ke baris paling atas
                 $col = 0; // Reset ke kolom paling kiri
 
                 if ($tampilkanGrid) {
-                    $this->gambarGridPanduan($pdf, $marginKiri, $marginAtas, $lebarLabel, $tinggiLabel);
+                    $this->gambarGridPanduan($pdf, $marginKiri, $marginAtas, $lebarLabel, $tinggiLabel, $jarakHorizontal, $jarakVertikal, $jumlahKolom, $jumlahBaris);
                 }
             }
 
             // Hitung titik koordinat (Selalu bergerak dari kiri ke kanan berurutan)
-            $x = $marginKiri + ($col * $lebarLabel);
-            $y = $marginAtas + ($row * $tinggiLabel);
+            $x = $marginKiri + ($col * ($lebarLabel + $jarakHorizontal));
+            $y = $marginAtas + ($row * ($tinggiLabel + $jarakVertikal));
+            $xKonten = $x + $paddingX;
+            $yKonten = $y + $paddingTop;
 
             // Cetak Barcode 1D di atas id_barang
             $generator = new BarcodeGeneratorPNG();
             $barcodeData = $generator->getBarcode((string) $item->id_barang, $generator::TYPE_CODE_128, 2, 30);
             $barcodeFile = tempnam(sys_get_temp_dir(), 'barcode_') . '.png';
             file_put_contents($barcodeFile, $barcodeData);
-            $pdf->Image($barcodeFile, $x, $y, $lebarLabel, 8);
+            $pdf->Image($barcodeFile, $xKonten, $yKonten, $lebarAreaCetak, 7);
             @unlink($barcodeFile);
 
             // Cetak ID Barang
-            $pdf->SetXY($x, $y + 8.5);
-            $pdf->SetFont('Arial', '', 8);
-            $pdf->Cell($lebarLabel, 4, (string) $item->id_barang, 0, 0, 'L');
+            $pdf->SetXY($xKonten, $yKonten + 7.4);
+            $pdf->SetFont('Arial', '', 7);
+            $pdf->Cell($lebarAreaCetak, 4, (string) $item->id_barang, 0, 0, 'L');
 
             // Cetak Nama Barang
-            $pdf->SetXY($x, $y + 12.5);
-            $pdf->SetFont('Arial', 'B', 9);
-            $pdf->Cell($lebarLabel, 4, substr($item->nama, 0, 18), 0, 0, 'L');
+            $pdf->SetXY($xKonten, $yKonten + 10.2);
+            $pdf->SetFont('Arial', 'B', 6);
+            $pdf->Cell($lebarAreaCetak, 4, substr($item->nama, 0, 18), 0, 0, 'L');
 
             // Cetak Harga Barang
-            $pdf->SetXY($x, $y + 16.5);
-            $pdf->SetFont('Arial', '', 8);
-            $pdf->Cell($lebarLabel, 4, 'Rp ' . number_format($item->harga, 0, ',', '.'), 0, 0, 'L');
-            $pdf->SetFont('Arial', 'B', 9);
+            $pdf->SetXY($xKonten, $yKonten + 13.2);
+            $pdf->SetFont('Arial', '', 5);
+            $pdf->Cell($lebarAreaCetak, 4, 'Rp ' . number_format($item->harga, 0, ',', '.'), 0, 0, 'L');
+            $pdf->SetFont('Arial', 'B', 7);
 
             // Geser posisi ke kolom berikutnya
             $col++;
             
             // Jika kolom sudah mencapai 5 (mentok kanan), turun ke baris baru dan kembali ke kolom pertama
-            if ($col >= 5) {
+            if ($col >= $jumlahKolom) {
                 $col = 0;
                 $row++;
             }
@@ -162,14 +174,14 @@ public function cetak(Request $request)
         exit;
     }
 
-    private function gambarGridPanduan($pdf, $marginKiri, $marginAtas, $lebarLabel, $tinggiLabel): void
+    private function gambarGridPanduan($pdf, $marginKiri, $marginAtas, $lebarLabel, $tinggiLabel, $jarakHorizontal = 0, $jarakVertikal = 0, $jumlahKolom = 5, $jumlahBaris = 8): void
     {
         $pdf->SetDrawColor(220, 220, 220);
 
-        for ($r = 0; $r < 8; $r++) {
-            for ($c = 0; $c < 5; $c++) {
-                $x = $marginKiri + ($c * $lebarLabel);
-                $y = $marginAtas + ($r * $tinggiLabel);
+        for ($r = 0; $r < $jumlahBaris; $r++) {
+            for ($c = 0; $c < $jumlahKolom; $c++) {
+                $x = $marginKiri + ($c * ($lebarLabel + $jarakHorizontal));
+                $y = $marginAtas + ($r * ($tinggiLabel + $jarakVertikal));
                 $pdf->Rect($x, $y, $lebarLabel, $tinggiLabel);
             }
         }
@@ -193,5 +205,25 @@ public function cetak(Request $request)
         }
 
         return $candidateId;
+    }
+
+    public function scan()
+    {
+        return view('barang.scan');
+    }
+
+    public function show($id_barang)
+    {
+        $barang = Barang::where('id_barang', $id_barang)->first();
+
+        if (!$barang) {
+            return response()->json(['error' => 'Barang tidak ditemukan'], 404);
+        }
+
+        return response()->json([
+            'id_barang' => $barang->id_barang,
+            'nama' => $barang->nama,
+            'harga' => $barang->harga,
+        ]);
     }
 }
