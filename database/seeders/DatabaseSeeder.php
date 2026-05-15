@@ -59,5 +59,8 @@ class DatabaseSeeder extends Seeder
             'title' => 'Keajaiban Toko Kelontong Namiya',
             'author' => 'Keigo Higashino'
         ]);
+
+        // Seed Lokasi Toko
+        $this->call(LokasiTokoSeeder::class);
     }
 }

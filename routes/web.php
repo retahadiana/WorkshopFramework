@@ -16,6 +16,8 @@ use App\Http\Controllers\BarangController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\WilayahController;
 use App\Http\Controllers\KasirController;
+use App\Http\Controllers\KunjunganTokoController;
+use App\Http\Controllers\LokasiTokoController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -118,3 +120,18 @@ Route::get('/api/barang-search', [KasirController::class, 'cariKode'])
 Route::post('/penjualan/store', [KasirController::class, 'storeTransaksi'])
     ->middleware(['auth','session.user'])
     ->name('kasir.store');
+
+// Kunjungan Toko (geolocation)
+Route::get('/kunjungan-toko', [KunjunganTokoController::class, 'index'])->middleware(['auth','session.user'])->name('kunjungan.toko');
+Route::post('/kunjungan-toko', [KunjunganTokoController::class, 'store'])->middleware(['auth','session.user']);
+Route::get('/api/lokasi-toko/{barcode}', [KunjunganTokoController::class, 'getByBarcode'])->middleware(['auth','session.user']);
+Route::get('/kunjungan-toko/cetak-barcode', [KunjunganTokoController::class, 'cetakBarcode'])->middleware(['auth','session.user']);
+
+// Data Toko CRUD
+Route::get('/data-toko', [LokasiTokoController::class, 'index'])->middleware(['auth','session.user'])->name('data-toko.index');
+Route::get('/data-toko/create', [LokasiTokoController::class, 'create'])->middleware(['auth','session.user'])->name('data-toko.create');
+Route::post('/data-toko', [LokasiTokoController::class, 'store'])->middleware(['auth','session.user'])->name('data-toko.store');
+Route::get('/data-toko/{id}/edit', [LokasiTokoController::class, 'edit'])->middleware(['auth','session.user'])->name('data-toko.edit');
+Route::put('/data-toko/{id}', [LokasiTokoController::class, 'update'])->middleware(['auth','session.user'])->name('data-toko.update');
+Route::delete('/data-toko/{id}', [LokasiTokoController::class, 'destroy'])->middleware(['auth','session.user'])->name('data-toko.destroy');
+Route::get('/data-toko/{id}/print', [LokasiTokoController::class, 'print'])->middleware(['auth','session.user'])->name('data-toko.print');

@@ -64,6 +64,18 @@
             </a>
         </li>
         <li class="nav-item">
+            <a class="nav-link {{ request()->is('kunjungan-toko*') ? 'active' : '' }}" href="{{ url('/kunjungan-toko') }}">
+                <span class="menu-title">Kunjungan Toko</span>
+                <i class="mdi mdi-map-marker-check menu-icon"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ request()->is('data-toko*') ? 'active' : '' }}" href="{{ url('/data-toko') }}">
+                <span class="menu-title">Data Toko</span>
+                <i class="mdi mdi-store menu-icon"></i>
+            </a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('wilayah.index') ? 'active' : '' }}" href="{{ route('wilayah.index') }}">
                 <span class="menu-title">Wilayah Indonesia</span>
                 <i class="mdi mdi-map-marker-multiple menu-icon"></i>
