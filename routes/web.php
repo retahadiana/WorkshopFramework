@@ -18,6 +18,7 @@ use App\Http\Controllers\WilayahController;
 use App\Http\Controllers\KasirController;
 use App\Http\Controllers\KunjunganTokoController;
 use App\Http\Controllers\LokasiTokoController;
+use App\Http\Controllers\AntrianController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -135,3 +136,16 @@ Route::get('/data-toko/{id}/edit', [LokasiTokoController::class, 'edit'])->middl
 Route::put('/data-toko/{id}', [LokasiTokoController::class, 'update'])->middleware(['auth','session.user'])->name('data-toko.update');
 Route::delete('/data-toko/{id}', [LokasiTokoController::class, 'destroy'])->middleware(['auth','session.user'])->name('data-toko.destroy');
 Route::get('/data-toko/{id}/print', [LokasiTokoController::class, 'print'])->middleware(['auth','session.user'])->name('data-toko.print');
+
+// Antrian System Routes
+Route::get('/guest', [AntrianController::class, 'viewGuest'])->name('antrian.guest');
+Route::post('/guest/store', [AntrianController::class, 'store'])->name('antrian.store');
+
+Route::get('/admin', [AntrianController::class, 'viewAdmin'])->name('antrian.admin');
+Route::post('/admin/panggil', [AntrianController::class, 'panggil'])->name('antrian.panggil');
+Route::post('/admin/skip', [AntrianController::class, 'skip'])->name('antrian.skip');
+Route::post('/admin/recall', [AntrianController::class, 'recall'])->name('antrian.recall');
+Route::post('/admin/reset', [AntrianController::class, 'reset'])->name('antrian.reset');
+
+Route::get('/papan', [AntrianController::class, 'viewPapan'])->name('antrian.papan');
+Route::get('/sse/antrian', [AntrianController::class, 'stream'])->name('antrian.stream');
