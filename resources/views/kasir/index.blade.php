@@ -137,7 +137,8 @@
                     type: 'GET',
                     dataType: 'json',
                     success: function (response) {
-                        isiFormBarang(response.data);
+                        const barang = response.data || response;
+                        isiFormBarang(barang);
                     },
                     error: function () {
                         if (showNotFoundAlert) {

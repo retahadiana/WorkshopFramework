@@ -149,3 +149,11 @@ Route::post('/admin/reset', [AntrianController::class, 'reset'])->name('antrian.
 
 Route::get('/papan', [AntrianController::class, 'viewPapan'])->name('antrian.papan');
 Route::get('/sse/antrian', [AntrianController::class, 'stream'])->name('antrian.stream');
+
+// NFC Attendance System Routes
+use App\Http\Controllers\NfcScanController;
+use App\Http\Controllers\Api\AttendanceController;
+
+Route::get('/nfc-scan', [NfcScanController::class, 'index'])->middleware(['auth','session.user'])->name('nfc-scan.index');
+Route::post('/nfc-scan/store', [AttendanceController::class, 'store'])->middleware(['auth','session.user'])->name('nfc-scan.store');
+

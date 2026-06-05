@@ -115,6 +115,12 @@
                 </ul>
             </div>
         </li>
+        <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('nfc-scan.index') ? 'active' : '' }}" href="{{ route('nfc-scan.index') }}">
+                <span class="menu-title">Scan NFC</span>
+                <i class="mdi mdi-nfc menu-icon"></i>
+            </a>
+        </li>
     </ul>
 </nav>
 
